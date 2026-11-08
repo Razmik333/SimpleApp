@@ -1,0 +1,36 @@
+name: React Native CI
+
+on:
+  push:
+    branches: [development]
+  pull_request:
+    branches: [development]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Expo Doctor
+        run: npx expo-doctor
+
+      - name: Export Expo app
+        run: npx expo export --platform all
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: expo-build
+          path: dist/
